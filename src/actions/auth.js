@@ -5,6 +5,8 @@ import {
   SIGNUP_SUCCESS,
   SIGNUP_START,
   SIGNUP_FAILED,
+  AUTHENTICATE_USER,
+  LOG_OUT,
 } from './actionTypes';
 import { APIUrls } from '../helpers/urls';
 import { getFormBody } from '../helpers/utils';
@@ -65,6 +67,7 @@ export function login(email, password) {
         console.log('data', data);
         if (data.success) {
           //  dispatch action to save user
+          localStorage.setItem('token', data.data.token);
           dispatch(loginSuccess(data.data.user));
           return;
         }
@@ -98,5 +101,18 @@ export function signup(email, name, password, confirmPassword) {
         }
         dispatch(signupFailed(data.message));
       });
+  };
+}
+
+export function authenticateUser(user) {
+  return {
+    type: AUTHENTICATE_USER,
+    user,
+  };
+}
+
+export function logout() {
+  return {
+    type: LOG_OUT,
   };
 }
