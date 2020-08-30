@@ -9,6 +9,7 @@ import {
   LOG_OUT,
   CLEAR_AUTH_STATE,
   EDIT_USER_SUCCESSFUL,
+  EDIT_USER_FAILED,
 } from './actionTypes';
 import { APIUrls } from '../helpers/urls';
 import { getFormBody, getAuthTokenFromLocalStorage } from '../helpers/utils';
@@ -134,7 +135,7 @@ export function editUserSuccessful(user) {
 
 export function editUserFailed(error) {
   return {
-    type: EDIT_USER_SUCCESSFUL,
+    type: EDIT_USER_FAILED,
     error,
   };
 }
@@ -158,7 +159,8 @@ export function editUser(name, password, confirmPassword, userid) {
       .then((response) => response.json())
       .then((data) => {
         console.log('data', data);
-        if (data.data.success) {
+        if (data.success) {
+          console.log('yes');
           dispatch(editUserSuccessful(data.data.user));
           localStorage.setItem('token', data.data.token);
           return;
