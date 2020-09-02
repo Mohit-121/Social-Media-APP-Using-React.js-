@@ -1,4 +1,4 @@
-import { FETCH_FRIEND_SUCCESS } from './actionTypes';
+import { FETCH_FRIEND_SUCCESS, ADD_FRIEND, REMOVE_FRIEND } from './actionTypes';
 import { APIUrls } from '../helpers/urls';
 import { getAuthTokenFromLocalStorage } from '../helpers/utils';
 
@@ -23,5 +23,19 @@ export function fetchUserFriends(userId) {
         console.log('data', data);
         dispatch(fetchFriendsSuccess(data.data.friends));
       });
+  };
+}
+
+export function addFriend(friend) {
+  return {
+    type: ADD_FRIEND,
+    friend,
+  };
+}
+
+export function removeFriend(userid) {
+  return {
+    type: REMOVE_FRIEND,
+    userid,
   };
 }
