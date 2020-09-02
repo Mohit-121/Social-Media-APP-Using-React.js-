@@ -160,7 +160,6 @@ export function editUser(name, password, confirmPassword, userid) {
       .then((data) => {
         console.log('data', data);
         if (data.success) {
-          console.log('yes');
           dispatch(editUserSuccessful(data.data.user));
           localStorage.setItem('token', data.data.token);
           return;
