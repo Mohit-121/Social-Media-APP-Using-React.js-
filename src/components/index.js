@@ -9,6 +9,7 @@ import Setting from './Setting';
 import UserProfile from './UserProfile';
 import FriendList from './FriendList';
 import FriendListItem from './FriendListItem';
+import CreatePost from './CreatePost';
 
 export {
   PostsList,
@@ -22,4 +23,5 @@ export {
   UserProfile,
   FriendList,
   FriendListItem,
+  CreatePost,
 };
