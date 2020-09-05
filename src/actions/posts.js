@@ -1,4 +1,4 @@
-import { UPDATE_POSTS, ADD_POST } from './actionTypes';
+import { UPDATE_POSTS, ADD_POST, ADD_COMMENT } from './actionTypes';
 import { APIUrls } from '../helpers/urls';
 import { getAuthTokenFromLocalStorage, getFormBody } from '../helpers/utils';
 
@@ -34,7 +34,7 @@ export function createPost(content) {
   return (dispatch) => {
     const url = APIUrls.createPost();
     fetch(url, {
-      method: "POST",
+      method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
         Authorization: `Bearer ${getAuthTokenFromLocalStorage()}`,
@@ -46,6 +46,35 @@ export function createPost(content) {
         console.log('data', data);
         if (data.success) {
           dispatch(addPost(data.data.post));
+        }
+      });
+  };
+}
+
+export function addComment(comment,postId) {
+  return {
+    type: ADD_COMMENT,
+    comment,
+    postId,
+  };
+}
+
+export function createComment(content, postId) {
+  return (dispatch) => {
+    const url = APIUrls.createComment();
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Authorization: `Bearer ${getAuthTokenFromLocalStorage()}`,
+      },
+      body: getFormBody({ content, post_id: postId }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log('data', data);
+        if (data.success) {
+          dispatch(addComment(data.data.comment,postId));
         }
       });
   };
