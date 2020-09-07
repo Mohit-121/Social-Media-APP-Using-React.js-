@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import io from 'socket.io-client';
+import { connect } from 'react-redux';
 import '../chat.css';
 
 class Chat extends Component {
@@ -9,7 +11,55 @@ class Chat extends Component {
       messages: [], // {content: 'some message', self: true}
       typedMessage: '',
     };
+
+    this.socket = io.connect('http://54.237.158.65:5000');
+    this.userEmail = props.user.email;
+
+    if (this.userEmail) {
+      this.setupConnections();
+    }
   }
+
+  setupConnections = () => {
+    const self = this;
+    this.socket.on('connect', function () {
+      console.log('CONNECTION ESTABLISHED');
+
+      self.socket.emit('join_room', {
+        user_email: self.userEmail,
+        chatroom: 'codeial',
+      });
+
+      self.socket.on('user_joined', function (data) {
+        console.log('NEW USER JOINED');
+      });
+    });
+
+    this.socket.on('receive_message', function (data) {
+      const { messages } = self.state;
+      const messageObject = {};
+      messageObject.content = data.message;
+      if (data.user_email === self.userEmail) {
+        messageObject.self = true;
+      }
+
+      self.setState({
+        messages: [...messages, messageObject],
+        typedMessage: '',
+      });
+    });
+  };
+
+  handleSubmit = () => {
+    const { typedMessage } = this.state;
+    if (typedMessage && this.userEmail) {
+      this.socket.emit('send_message', {
+        message: typedMessage,
+        user_email: this.userEmail,
+        chatroom: 'codeial',
+      });
+    }
+  };
   render() {
     const { typedMessage, messages } = this.state;
 
@@ -24,10 +74,11 @@ class Chat extends Component {
           />
         </div>
         <div className="chat-messages">
-          {messages.map((message) => (
+          {messages.map((message,ind) => (
             <div
+              key={ind}
               className={
-                messages.self
+                message.self
                   ? 'chat-bubble self-chat'
                   : 'chat-bubble other-chat'
               }
@@ -49,4 +100,10 @@ class Chat extends Component {
   }
 }
 
-export default Chat;
+function mapStateToProps({ auth }) {
+  return {
+    user: auth.user,
+  };
+}
+
+export default connect(mapStateToProps)(Chat);
